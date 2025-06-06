@@ -1,0 +1,6 @@
+{
+  "ai_service_host": "124.70.8.249",
+  "ai_service_port": 1055,
+  "rest_port": 18080,
+  "grpc_port": 50051
+}

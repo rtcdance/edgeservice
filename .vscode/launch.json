@@ -1,0 +1,15 @@
+{
+    // 使用C++ (GDB/LLDB) 调试器
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug edgeservice",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/edgeservice",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "build"
+        }
+    ]
+} 

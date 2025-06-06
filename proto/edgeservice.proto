@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package edgeservice;
+
+// 单摄像头截图+AI校验
+service CameraService {
+  // 同步截图校验
+  rpc CaptureAndCheck (CaptureRequest) returns (CaptureResponse);
+
+  // 异步批量截图校验，返回task_id
+  rpc AsyncCaptureAndCheck (AsyncCaptureRequest) returns (AsyncCaptureResponse);
+
+  // 查询异步批量校验结果
+  rpc GetAsyncCaptureAndCheckResult (GetResultRequest) returns (GetResultResponse);
+
+  // 生成播放地址
+  rpc GenPlayUrl (GenPlayUrlRequest) returns (GenPlayUrlResponse);
+}
+
+// 单摄像头截图校验请求
+message CaptureRequest {
+  uint64 camera_id = 1;
+  string rtsp_url = 2;
+}
+
+// 单摄像头截图校验响应
+message CaptureResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+// 批量摄像头信息
+message CameraInfo {
+  uint64 camera_id = 1;
+  string rtsp_url = 2;
+}
+
+// 异步批量截图校验请求
+message AsyncCaptureRequest {
+  repeated CameraInfo cameras = 1;
+  int32 timeout = 2;
+}
+
+// 异步批量截图校验响应
+message AsyncCaptureResponse {
+  int32 code = 1;
+  string msg = 2;
+  string task_id = 3;
+}
+
+// 查询异步批量校验结果请求
+message GetResultRequest {
+  string task_id = 1;
+}
+
+// 单个摄像头校验结果
+message CameraCheckResult {
+  uint64 camera_id = 1;
+  int32 code = 2;
+  string msg = 3;
+  // 可扩展：如有AI结果字段可补充
+}
+
+// 查询异步批量校验结果响应
+message GetResultResponse {
+  int32 code = 1;
+  string msg = 2;
+  string task_id = 3;
+  repeated CameraCheckResult results = 4;
+}
+
+// 生成播放地址请求
+message GenPlayUrlRequest {
+  uint64 camera_id = 1;
+  string play_host = 2;
+  int32 play_port = 3;
+}
+
+// 生成播放地址响应
+message GenPlayUrlResponse {
+  string play_url = 1;
+  int32 code = 2;
+  string msg = 3;
+}
