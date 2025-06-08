@@ -16,38 +16,11 @@
 
 #include "3rdparty/include/cpp-httplib/httplib.h"
 #include "3rdparty/include/cppcodec/cppcodec/base64_rfc4648.hpp"
-#if defined(__APPLE__)
-#include <mach-o/dyld.h>
-#elif defined(__linux__)
-#include <unistd.h>
-#endif
 
 #include "utils/config_utils.h"
 #include "utils/http_utils.h"
 
-namespace fs = std::filesystem;
 using json = nlohmann::json;
-
-static std::string get_executable_dir() {
-#if defined(__APPLE__)
-  char path[1024] = "";
-  uint32_t size = sizeof(path);
-  if (_NSGetExecutablePath(path, &size) == 0) {
-    return fs::path(path).parent_path().string();
-  }
-  return ".";
-#elif defined(__linux__)
-  char path[1024] = "";
-  ssize_t len = readlink("/proc/self/exe", path, sizeof(path) - 1);
-  if (len > 0) {
-    path[len] = '\0';
-    return fs::path(path).parent_path().string();
-  }
-  return ".";
-#else
-  return ".";
-#endif
-}
 
 static std::string get_ffmpeg_path() {
   static std::string path = get_executable_dir() + "/ffmpeg";

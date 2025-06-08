@@ -6,8 +6,36 @@
 #include <nlohmann/json.hpp>
 #include <regex>
 #include <string>
+#if defined(__APPLE__)
+#include <mach-o/dyld.h>
+#elif defined(__linux__)
+#include <unistd.h>
+#endif
 
 #include "3rdparty/include/cpp-httplib/httplib.h"
+
+namespace fs = std::filesystem;
+
+static std::string get_executable_dir() {
+#if defined(__APPLE__)
+  char path[1024] = "";
+  uint32_t size = sizeof(path);
+  if (_NSGetExecutablePath(path, &size) == 0) {
+    return fs::path(path).parent_path().string();
+  }
+  return ".";
+#elif defined(__linux__)
+  char path[1024] = "";
+  ssize_t len = readlink("/proc/self/exe", path, sizeof(path) - 1);
+  if (len > 0) {
+    path[len] = '\0';
+    return fs::path(path).parent_path().string();
+  }
+  return ".";
+#else
+  return ".";
+#endif
+}
 
 inline bool is_digits(const std::string &s) {
   return !s.empty() && std::all_of(s.begin(), s.end(), ::isdigit);
